@@ -1,0 +1,45 @@
+
+body {
+  margin: 20px;
+}
+
+span.badge, small {
+  margin-left: 5px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.hide {
+  display: none;
+}
+
+.toggle-nodes.on:after {
+  content: 'Hide nodes';
+}
+
+.toggle-nodes:after {
+  content: 'Show nodes';
+}
+
+.panel-primary small {
+  color: #eee;
+}
+
+.toggle-passes.on:after {
+  content: 'Hide passes';
+}
+
+.toggle-passes {
+  margin-bottom: 15px;
+}
+
+.toggle-passes:after {
+  content: 'Show passes';
+}
+
+#browser-filter {
+  padding: 3px 6px;
+  margin-bottom: 10px;
+}
