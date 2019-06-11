@@ -1,10 +1,11 @@
-import {UserService} from "../db/UserService";
+import UserService from "../db/UserService";
 
 export default class UserController {
 
     userService;
-    constructor(readonly router) {
-        this.userService = new UserService();
+
+    constructor(readonly router, readonly connection) {
+        this.userService = new UserService(connection);
     }
 
     load() {
@@ -27,25 +28,39 @@ export default class UserController {
         });
 
         this.router.get("/user/list", async (ctx, next) => {
-            ctx.response.body = "no data";
-            await this.userService.findAllUsers((result) => {
-                ctx.response.body = result;
-            })
+
+            ctx.response.body = await this.userService.findAllUsers();
+        });
+
+        this.router.get("/user/promiseTest", async (ctx, next) => {
+            ctx.response.body = await this.userService.promiseTest();
         });
 
         this.router.post("/user/add", async (ctx, next) => {
-            const {name = '', password = ''} = ctx.request.body || {};
-            if (!name || !password) {
+            const {name = '', age = undefined} = ctx.request.body || {};
+            if (!name || !age) {
                 ctx.response.body = 'xx name and password can not empty';
                 return;
             }
-            this.userService.addUser({name, password}, (err, result) => {
-                if (err) {
-                    ctx.response.body = 'save fail';
-                } else {
-                    ctx.response.body = 'save success';
-                }
-            })
-        })
+            ctx.response.body = await this.userService.addUser({name, age})
+        });
+
+        this.router.post("/user/update", async (ctx, next) => {
+            const {id = undefined, name = '', age = undefined} = ctx.request.body || {};
+            if (!id || !name || !age) {
+                ctx.response.body = 'id, name and password can not empty';
+                return;
+            }
+            ctx.response.body = await this.userService.updateUser({id, name, age})
+        });
+
+        this.router.post("/user/delete", async (ctx, next) => {
+            const {id = undefined} = ctx.request.body || {};
+            if (!id) {
+                ctx.response.body = 'id can not empty';
+                return;
+            }
+            ctx.response.body = await this.userService.deleteUser(id)
+        });
     }
 }

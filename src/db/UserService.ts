@@ -1,29 +1,40 @@
-import {BaseService} from "./BaseService";
+import BaseService from "./BaseService";
 
-export class UserService extends BaseService {
+export default class UserService extends BaseService {
 
-    async findAllUsers(callback) {
-
-        this.connect();
+    findAllUsers() {
 
         const strQuery = "select * from seafood_user";
 
-        return await this.connection.query(strQuery, (err, result) => {
-            this.disconnect();
-
-            if (err) {
-                throw err;
-            }
-
-            console.log(result);
-            callback(result);
-        });
+        return this.executeSql(strQuery);
     }
 
-    addUser(user, callback?) {
-        let addSql = 'INSERT INTO seafood_user(name, age) VALUES (?, ?) ';
-        let addSqlParams = [user.name, user.age];
+    async promiseTest() {
+        return new Promise((resolve => {
+            resolve("this is promise test");
+        }))
+    }
 
-        this.connection.query(addSql, addSqlParams, callback);
+    addUser({name, age}) {
+
+        let addSql = 'INSERT INTO seafood_user(name, age) VALUES (?, ?) ';
+        let addSqlParams = [name, age];
+
+        return this.executeSql(addSql, addSqlParams);
+    }
+
+    updateUser({id, name, age}) {
+
+        let sql = 'update seafood_user set name = ?, age = ? where id = ?';
+        let params = [name, age, id];
+
+        return this.executeSql(sql, params);
+    }
+
+    deleteUser(id) {
+        let sql = 'delete from seafood_user where id = ?';
+        let params = [id];
+
+        return this.executeSql(sql, params);
     }
 }

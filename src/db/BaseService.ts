@@ -1,25 +1,19 @@
-import * as Config from './config'
+export default class BaseService {
 
-const mysql = require('mysql');
-
-export class BaseService {
-    connection;
-
-    constructor() {
-        this.connection = mysql.createConnection({
-            host: Config.DB_HOST,
-            port: Config.DB_PORT,
-            database: Config.DB_DATABASE,
-            user: Config.DB_USER,
-            password: Config.DB_PASSWORD
-        });
+    constructor(readonly connection) {
     }
 
-    connect() {
-        this.connection.connect();
-    }
+    executeSql(sql, params?) {
 
-    disconnect() {
-        this.connection.end();
+        return new Promise((resolve => {
+            this.connection.query(sql, params, (err, data) => {
+                if (err) {
+                    resolve({
+                        message: err.message
+                    })
+                }
+                resolve(data);
+            });
+        }))
     }
 }
