@@ -1,0 +1,43 @@
+{
+  "name": "blockbuster",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "test": "jest --maxWorkers==1 /Users/travis.xu/work_mine/nodeDemo/src/blockbuster/test/lease/**",
+    "test2": "ava -s /Users/travis.xu/work_mine/nodeDemo/src/blockbuster/test2/ci/get.test.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/body-parser": "^1.19.0",
+    "@types/cors": "^2.8.7",
+    "@types/express": "4.17.8",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^14.6.4",
+    "@types/supertest": "^2.0.10",
+    "forever": "^3.0.2",
+    "jest": "^26.6.3",
+    "openapi-swagger-editor-live": "^1.1.0",
+    "supertest": "^6.0.1",
+    "ts-jest": "^26.4.4",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.2"
+  },
+  "dependencies": {
+    "@ava/babel": "^1.0.1",
+    "ava": "^3.13.0",
+    "cors": "^2.8.5",
+    "filtrex": "^2.1.0",
+    "helmet": "^4.1.0",
+    "moment": "^2.27.0",
+    "reflect-metadata": "^0.1.13",
+    "sqlite3": "^5.0.0",
+    "swagger-stats": "^0.95.17",
+    "swagger-ui-express": "^4.1.4",
+    "typeorm": "^0.2.25",
+    "yaml": "^1.10.0"
+  }
+}
