@@ -1,0 +1,258 @@
+openapi: 3.0.0
+
+info:
+  title: Blockbuster
+  version: 0.1.0
+  description: A super lightweight directory service with lease management.
+
+tags:
+  - name: ci
+    description: Configuration item management.
+  - name: lease
+    description: Lease management.
+
+paths:
+  /ci:
+    get:
+      tags:
+        - ci
+      summary: Get configuration items.
+      operationId: getConfigurationItems
+      parameters:
+        - in: query
+          name: uri
+          schema:
+            $ref: '#/components/schemas/Uri'
+        - in: query
+          name: scope
+          schema:
+            $ref: '#/components/schemas/SearchScope'
+
+      responses:
+        200:
+          description: Configuration item list.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConfigurationItem'
+        404:
+          description: URI not found.
+
+    post:
+      tags:
+        - ci
+      summary: Create a configuration item.
+      operationId: createConfigurationItem
+      requestBody:
+        description: Content of configuration item.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigurationItem'
+      responses:
+        201:
+          description: Success to create configuration item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationItem'
+        409:
+          description: URI conflict.
+
+    put:
+      tags:
+        - ci
+      summary: Update a configuration item.
+      operationId: updateConfigurationItem
+      requestBody:
+        description: Content of configuration item.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigurationItem'
+      responses:
+        200:
+          description: Success to update configuration item.
+        404:
+          description: CI not found.
+
+    delete:
+      tags:
+        - ci
+      summary: Delete a configuration item.
+      operationId: deleteConfigurationItem
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uri:
+                  $ref: '#/components/schemas/Uri'
+
+
+  /lease:
+    get:
+      tags:
+        - lease
+      summary: Get Leases.
+      operationId: getLeases
+      responses:
+        200:
+          description: Lease list.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Lease'
+    post:
+      tags:
+        - lease
+      summary: Create a lease from specific configuration items.
+      operationId: createLease
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                duration:
+                  type: integer
+                  example: 60
+                  description: lease duration in seconds
+                uri:
+                  $ref: '#/components/schemas/Uri'
+                scope:
+                  $ref: '#/components/schemas/SearchScope'
+      responses:
+        200:
+          description: Success to create a lease.
+          content:
+            application/json:
+              schema:
+                result:
+                  type: boolean
+        404:
+          description: CI not found.
+        400:
+          description: param is invalid.
+
+    delete:
+      tags:
+        - lease
+      summary: delete a lease
+      operationId: deleteLease
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uri:
+                  $ref: '#/components/schemas/Uri'
+      responses:
+        200:
+          description: Success to create a lease.
+          content:
+            application/json:
+              schema:
+                result:
+                  type: boolean
+        404:
+          description: CI not found.
+        400:
+          description: param is invalid.
+
+    put:
+      tags:
+        - lease
+      summary: update a lease
+      operationId: updateLease
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uri:
+                  $ref: '#/components/schemas/Uri'
+                renew:
+                  type: integer
+                  example: 60
+                  description: Renew period. The updated lease will expire after current time + renew period.
+      responses:
+        200:
+          description: Success to create a lease.
+          content:
+            application/json:
+              schema:
+                result:
+                  type: boolean
+        404:
+          description: CI not found.
+        400:
+          description: param is invalid.
+
+
+
+components:
+  schemas:
+    Uri:
+      type: string
+      example: /p1/p2/p3
+
+    Filter:
+      type: string
+      example: field1 of data == "value1"
+      externalDocs:
+        description: filtrex
+        url: https://github.com/m93a/filtrex
+
+    SearchScope:
+      type: integer
+      enum: [0, 1, 2]
+      default: 0
+      description: 0 for base object, 1 for one-level, 2 for subtree (TBD)
+      externalDocs:
+        description: LDAP's convention
+        url: https://docs.microsoft.com/en-us/windows/win32/ad/search-scope
+
+    ConfigurationItem:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          format: uuid
+        uri:
+          type: string
+          example: /p1/p2/p3
+        data:
+          type: object
+          example:
+            field1: value1
+        maxLease:
+          type: integer
+          default: 1
+          example: 1
+          description: max lease a CI can have
+
+
+    Lease:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          format: uuid
+        expiredAfter:
+          type: string
+          format: date-time
+        ci:
+          $ref: '#/components/schemas/ConfigurationItem'
+
