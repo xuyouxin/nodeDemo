@@ -14,7 +14,7 @@
   "license": "ISC",
   "devDependencies": {
     "clean-webpack-plugin": "^2.0.2",
-    "file-loader": "^3.0.1",
+    "file-loader": "^6.2.0",
     "fs": "0.0.1-security",
     "testcafe": "^1.2.1"
   },
